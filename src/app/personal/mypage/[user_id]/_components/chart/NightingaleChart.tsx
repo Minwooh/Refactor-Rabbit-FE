@@ -1,8 +1,4 @@
-"use client";
-import { useEffect, useRef } from "react";
-import styled from "styled-components";
-import * as echarts from "echarts";
-
+import BaseChart from "./BaseChart";
 export type ChartData = { value: number; name: string }[];
 
 interface NightingaleChartProps {
@@ -18,82 +14,42 @@ function NightingaleChart({
     inner,
     outer,
 }: NightingaleChartProps) {
-    const chartRef = useRef<HTMLDivElement>(null);
+    const sum = data.reduce((a, b) => a + b.value, 0);
+    const seriesData = sum === 0 ? [] : data;
 
-    useEffect(() => {
-        if (!chartRef.current) return;
-        const myChart = echarts.init(chartRef.current);
-        const sum = data.reduce((a, b) => a + b.value, 0);
-        const seriesData = sum === 0 ? [] : data;
-
-        const option: echarts.EChartsOption = {
-            color: colors,
-            tooltip: {
-                trigger: "item",
-            },
-            series: [
-                {
-                    name: "Access From",
-                    type: "pie",
-                    radius: [inner ?? 15, outer ?? 60],
-                    center: ["68%", "50%"],
-                    avoidLabelOverlap: false,
-                    padAngle: 3,
-                    itemStyle: {
-                        borderRadius: 5,
-                    },
-                    label: {
-                        show: false,
-                        position: "center",
-                    },
-                    emphasis: {
-                        label: {
-                            show: true,
-                            fontSize: 20,
-                            fontWeight: "bold",
-                        },
-                    },
-                    labelLine: {
-                        show: false,
-                    },
-
-                    emptyCircleStyle: {
-                        color: "#e0e0e0",
-                    },
-                    data: seriesData,
+    const option: echarts.EChartsOption = {
+        color: colors,
+        tooltip: { trigger: "item" },
+        legend: {
+            show: true,
+            orient: "vertical",
+            left: 0,
+            top: "20%",
+            itemWidth: 14,
+            itemHeight: 8,
+            textStyle: { fontSize: 10, color: "#000" },
+        },
+        series: [
+            {
+                name: "Access From",
+                type: "pie",
+                radius: [inner ?? 15, outer ?? 60],
+                center: ["68%", "50%"],
+                avoidLabelOverlap: false,
+                padAngle: 3,
+                itemStyle: { borderRadius: 5 },
+                label: { show: false, position: "center" },
+                emphasis: {
+                    label: { show: true, fontSize: 20, fontWeight: "bold" },
                 },
-            ],
-            legend: {
-                show: true,
-                orient: "vertical", // 세로로 나열
-                left: 0, // 오른쪽에 배치
-                top: "20%", // 세로 중앙 정렬
-                itemWidth: 14, // 범례 아이콘 너비
-                itemHeight: 8, // 범례 아이콘 높이
-                textStyle: {
-                    fontSize: "10px",
-                    color: "#000", // 글씨 색상
-                },
+                labelLine: { show: false },
+                emptyCircleStyle: { color: "#e0e0e0" },
+                data: seriesData,
             },
-        };
+        ],
+    };
 
-        myChart.setOption(option);
-
-        const resizeHandler = () => myChart.resize();
-        window.addEventListener("resize", resizeHandler);
-
-        return () => {
-            window.removeEventListener("resize", resizeHandler);
-            myChart.dispose();
-        };
-    }, [data, colors]);
-
-    return <ChartContainer ref={chartRef} />;
+    return <BaseChart option={option} />;
 }
-
-const ChartContainer = styled.div`
-    width: 100%;
-    height: 100%;
-`;
 
 export default NightingaleChart;
