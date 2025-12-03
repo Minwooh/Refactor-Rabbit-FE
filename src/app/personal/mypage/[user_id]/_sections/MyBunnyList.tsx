@@ -2,6 +2,7 @@ import styled from "styled-components";
 import SortBigButton from "../_components/my-list/SortBigButton";
 import ListTable from "../_components/my-list/ListTable";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import ListButton from "../_components/my-list/ListButton";
 import {
     BunnyStats,
@@ -13,7 +14,7 @@ import {
     MatchBunny,
     OrderBunny,
 } from "@/app/_api/userAPI";
-import Top1Container from "../_components/my-bunny/Top1Container";
+//import Top1Container from "../_components/my-bunny/Top1Container";
 import { useUserStore } from "@/app/_store/userStore";
 
 const orderFieldList = [
@@ -62,6 +63,14 @@ export interface Top {
     type?: string;
     carrot?: number;
 }
+
+const Top1Container = dynamic(
+    () => import("../_components/my-bunny/Top1Container"),
+    {
+        ssr: false,
+        loading: () => null, // 필요하면 "로딩중..." 같은 컴포넌트 넣어도 됨
+    }
+);
 
 function MyBunnyList() {
     const [isHistory, setIsHistory] = useState(false);
@@ -122,6 +131,13 @@ function MyBunnyList() {
         setIsHistory(true);
     };
 
+    const [showSwiper, setShowSwiper] = useState(false);
+
+    useEffect(() => {
+        // 첫 렌더(화면 그려진 뒤)에 Swiper 렌더 시작
+        setShowSwiper(true);
+    }, []);
+
     useEffect(() => {
         const fetchBunnyStats = async () => {
             try {
@@ -178,7 +194,7 @@ function MyBunnyList() {
 
     return (
         <Wrapper>
-            <Top1Container data={topData} myRole={myRole} />
+            {showSwiper && <Top1Container data={topData} myRole={myRole} />}
             <FirstRow>
                 <SortBigButton
                     sortTitle="직군"

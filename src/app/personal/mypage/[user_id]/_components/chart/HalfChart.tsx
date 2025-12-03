@@ -1,6 +1,5 @@
 //"use client";
-import * as echarts from "echarts";
-import BaseChart from "./BaseChart";
+import BaseChart, { EChartsOption } from "./BaseChart";
 
 export type ChartData = { value: number; name: string }[];
 
@@ -21,7 +20,7 @@ function HalfChart({
     width,
     height,
 }: HalfChartProps) {
-    const option: echarts.EChartsOption = {
+    const option: EChartsOption = {
         color: colors,
         legend: { show: false },
         series: [

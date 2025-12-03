@@ -1,5 +1,6 @@
 import GlassBox from "@/app/personal/mypage/[user_id]/_components/GlassBox";
 import styled from "styled-components";
+import Image from "next/image";
 
 const getTypeInfo = (type?: string) => {
     switch (type) {
@@ -51,9 +52,15 @@ function CoinType({ type }: CoinTypeProps) {
             isNoti={false}
             color="#e3e1e1f8"
             backgroundImage="/images/personal/shared/space.jpeg"
+            isLCP
         >
             <TitleIconContainer>
-                <TypeIcon src={typeInfo.icon} />
+                <TypeIcon
+                    src={typeInfo.icon}
+                    width={35}
+                    height={35}
+                    alt="아이콘"
+                />
                 <TypeTitle>{typeInfo.title}</TypeTitle>
             </TitleIconContainer>
             <TypeAttributes>
@@ -96,8 +103,7 @@ const TitleIconContainer = styled.div`
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.25);
 `;
 
-const TypeIcon = styled.img`
-    width: 35px;
+const TypeIcon = styled(Image)`
     height: auto;
 `;
 

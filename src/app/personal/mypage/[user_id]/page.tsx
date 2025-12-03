@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import MyBunny from "./_sections/MyBunny";
 import MyBunnyList from "./_sections/MyBunnyList";
 import MyInfo from "./_sections/MyInfo";
@@ -94,13 +95,23 @@ function MyPage() {
                             localStorage.setItem("mypageTab", "info");
                         }}
                     >
-                        <SmallRocketImage src="/images/icon/backend.png" />내
-                        정보 업데이트 하기
+                        <SmallRocketImage
+                            src="/images/icon/backend.png"
+                            width={20}
+                            height={20}
+                            alt="로켓"
+                        />
+                        내 정보 업데이트 하기
                     </MoveBtn>
 
                     <Link href="/personal/funding">
                         <MoveBtn>
-                            <SmallRocketImage src="/images/personal/mypage/small_rocket.png" />
+                            <SmallRocketImage
+                                src="/images/personal/mypage/small_rocket.png"
+                                width={20}
+                                height={20}
+                                alt="로켓"
+                            />
                             상장 페이지로 이동
                         </MoveBtn>
                     </Link>
@@ -115,10 +126,7 @@ const Div = styled.div`
     height: 100%;
 `;
 
-const SmallRocketImage = styled.img`
-    width: 20px;
-    height: 20px;
-`;
+const SmallRocketImage = styled(Image)``;
 
 const MoveBtn = styled.div`
     width: 11rem;

@@ -8,6 +8,9 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install --frozen-lockfile
 
+#이미지 최적화
+RUN npm run optimize:images
+
 # 소스 복사 후 빌드
 COPY . /app
 RUN npm run build

@@ -1,4 +1,4 @@
-import BaseChart from "./BaseChart";
+import BaseChart, { EChartsOption } from "./BaseChart";
 export type ChartData = { value: number; name: string }[];
 
 interface NightingaleChartProps {
@@ -17,7 +17,7 @@ function NightingaleChart({
     const sum = data.reduce((a, b) => a + b.value, 0);
     const seriesData = sum === 0 ? [] : data;
 
-    const option: echarts.EChartsOption = {
+    const option: EChartsOption = {
         color: colors,
         tooltip: { trigger: "item" },
         legend: {

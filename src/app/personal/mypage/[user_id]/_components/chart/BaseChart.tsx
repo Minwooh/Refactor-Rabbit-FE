@@ -1,11 +1,30 @@
 //"use client";
 
 import { useEffect, useRef } from "react";
-import * as echarts from "echarts";
+import * as echarts from "echarts/core";
+import { RadarChart, BarChart, PieChart, LineChart } from "echarts/charts";
+import {
+    TooltipComponent,
+    GridComponent,
+    LegendComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
 import styled from "styled-components";
 
+export type EChartsOption = import("echarts").EChartsOption;
+
+echarts.use([
+    RadarChart,
+    BarChart,
+    PieChart,
+    TooltipComponent,
+    GridComponent,
+    LegendComponent,
+    CanvasRenderer,
+]);
+
 interface BaseChartProps {
-    option: echarts.EChartsOption;
+    option: EChartsOption;
     className?: string;
     width?: string;
     height?: string;

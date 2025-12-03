@@ -1,6 +1,10 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
+import BaseChart, {
+    type EChartsOption,
+} from "@/app/personal/mypage/[user_id]/_components/chart/BaseChart";
 
 import { ChartData } from "../../_api/bunnyAPI";
 
@@ -17,45 +21,18 @@ const Chart = ({
     isMypage = false,
     onPeriodChange,
 }: ChartProps) => {
-    const chartRef = useRef(null);
-    const [activePeriod, setActivePeriod] = useState("일");
+    const [activePeriod, setActivePeriod] = useState<"일" | "주" | "월">("일");
 
-    const handlePeriodChange = (period: string) => {
+    const handlePeriodChange = (period: "일" | "주" | "월") => {
         setActivePeriod(period);
-        if (onPeriodChange) {
-            onPeriodChange(period);
-        }
+        onPeriodChange?.(period);
     };
 
-    useEffect(() => {
-        if (!window.echarts) {
-            const script = document.createElement("script");
-            script.src =
-                "https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js";
-            script.onload = () => {
-                initChart();
-            };
-            document.head.appendChild(script);
-        } else {
-            initChart();
-        }
-
-        return () => {
-            if (chartRef.current && window.echarts) {
-                window.echarts.dispose(chartRef.current);
-            }
-        };
-    }, [chartData]);
-
-    const getChartData = () => {
+    const { xData, yData } = useMemo(() => {
         if (!chartData || !chartData.chart_data_list) {
-            return {
-                xData: [],
-                yData: [],
-            };
+            return { xData: [] as string[], yData: [] as number[] };
         }
 
-        // 날짜 순으로 정렬 (오래된 날짜부터 최신 날짜 순)
         const sortedData = [...chartData.chart_data_list].sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
@@ -72,22 +49,14 @@ const Chart = ({
 
         const yData = dataList.map((item) => item.closing_price);
 
-        return {
-            xData,
-            yData,
-        };
-    };
+        return { xData, yData };
+    }, [chartData, activePeriod]);
 
-    const initChart = () => {
-        if (!chartRef.current || !window.echarts) return;
-
-        const myChart = window.echarts.init(chartRef.current);
-        const chartDataForDisplay = getChartData();
-
-        const option = {
+    const option: EChartsOption = useMemo(
+        () => ({
             xAxis: {
                 type: "category",
-                data: chartDataForDisplay.xData,
+                data: xData,
                 axisLine: {
                     lineStyle: {
                         color: "rgba(255, 255, 255, 0.3)",
@@ -124,7 +93,7 @@ const Chart = ({
             },
             series: [
                 {
-                    data: chartDataForDisplay.yData,
+                    data: yData,
                     type: "line",
                     smooth: true,
                     lineStyle: {
@@ -163,20 +132,9 @@ const Chart = ({
                     color: "#fff",
                 },
             },
-        };
-
-        myChart.setOption(option);
-
-        const handleResize = () => {
-            myChart.resize();
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    };
+        }),
+        [xData, yData, isMypage]
+    );
 
     return (
         <ChartContainer>
@@ -200,19 +158,15 @@ const Chart = ({
                     월
                 </PeriodButton>
             </ButtonContainer>
+
             {isLoading ? (
                 <LoadingContainer>
                     <LoadingText>차트 로딩중 🐰</LoadingText>
                 </LoadingContainer>
             ) : (
-                <div
-                    ref={chartRef}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        minHeight: "200px",
-                    }}
-                />
+                <ChartInner>
+                    <BaseChart option={option} width="100%" height="100%" />
+                </ChartInner>
             )}
         </ChartContainer>
     );
@@ -258,6 +212,12 @@ const PeriodButton = styled.button<{ $active: boolean }>`
           background-color: rgba(255, 255, 255, 0.3);
         }
       `}
+`;
+
+const ChartInner = styled.div`
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
 `;
 
 const LoadingContainer = styled.div`
