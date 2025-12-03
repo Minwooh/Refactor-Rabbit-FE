@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image";
 
 interface MyDataType {
     name: string;
@@ -6,9 +7,17 @@ interface MyDataType {
 }
 
 function Profile({ name, src }: MyDataType) {
+    const fallback = "/images/personal/shared/basic_profile.png";
+
     return (
         <Div>
-            <MyImg $src={src ?? "/images/personal/shared/basic_profile.png"} />
+            <MyImg
+                src={fallback}
+                width={50}
+                height={50}
+                alt="나의 이미지"
+                quality={70}
+            />
             <MyName>{name}</MyName>
         </Div>
     );
@@ -23,13 +32,9 @@ const Div = styled.div`
     gap: 1rem;
 `;
 
-const MyImg = styled.div<{ $src: string }>`
-    width: 3.2rem;
-    height: 3.2rem;
-    background-image: url(${(props) => props.$src});
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+const MyImg = styled(Image)`
     border-radius: 12px;
+    object-fit: cover;
 `;
 const MyName = styled.div`
     font-family: var(--font-nanum-square);

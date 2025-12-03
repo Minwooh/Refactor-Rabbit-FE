@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import * as echarts from "echarts";
-import BaseChart from "@/app/personal/mypage/[user_id]/_components/chart/BaseChart";
+import BaseChart, {
+    EChartsOption,
+} from "@/app/personal/mypage/[user_id]/_components/chart/BaseChart";
 import { Bunny } from "../../_store/bunnyStore";
 
 interface PentagonChartProps {
@@ -24,7 +25,7 @@ const PentagonChart = ({
         data.reliability,
     ];
 
-    const option: echarts.EChartsOption = {
+    const option: EChartsOption = {
         radar: {
             indicator: [
                 { name: "성장형", max: 100 },

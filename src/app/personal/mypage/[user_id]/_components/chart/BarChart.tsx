@@ -1,6 +1,5 @@
 //"use client";
-import * as echarts from "echarts";
-import BaseChart from "./BaseChart";
+import BaseChart, { EChartsOption } from "./BaseChart";
 import { BunnyHolder } from "@/app/_api/bunnyAPI";
 
 interface BarChartProps {
@@ -32,7 +31,7 @@ function BarChart({ data, width, height }: BarChartProps) {
         itemStyle: { color: colors[i % colors.length] },
     }));
 
-    const option: echarts.EChartsOption = {
+    const option: EChartsOption = {
         color: colors,
         xAxis: {
             type: "category",

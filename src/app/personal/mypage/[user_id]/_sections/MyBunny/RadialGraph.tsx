@@ -14,7 +14,6 @@ function RadialGraph({ data, devType }: RadialGraphProps) {
             text="개발자 유형"
             isNoti={false}
             color="#e3e1e1f8"
-            // backgroundColor="linear-gradient(to bottom, #fff4d1, #ffffff)"
             backgroundColor="#03154a66"
         >
             <DevType>{devType}</DevType>

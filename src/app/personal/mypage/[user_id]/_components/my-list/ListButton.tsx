@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image";
 import {
     handleEnterBackground,
     handleLeaveBackground,
@@ -22,9 +23,14 @@ function ListButton({ onGetList, totalLength, content }: ListButtonProps) {
                 }
                 onMouseLeave={handleLeaveBackground}
                 onClick={onGetList}
-                $content={content}
             >
-                {/* <RabbitImg src="/images/personal/mypage/sit_rabbit.png" /> */}
+                <BgImage
+                    src="/images/personal/shared/space.jpeg"
+                    alt=""
+                    fill
+                    priority
+                    $content={content}
+                />
                 <span>총</span>
                 <TotalLength>{totalLength}</TotalLength>
                 <span>건</span>
@@ -39,19 +45,11 @@ const Div = styled.div`
     height: 100%;
 `;
 
-const Main = styled.div<{ $content: string }>`
+const Main = styled.div`
     position: relative;
     padding: 1rem;
     width: 100%;
     height: 100%;
-    background-image: ${({ $content }) =>
-        $content === "거래 기록 보기"
-            ? `url("/images/personal/mypage/earth.png")`
-            : `url("/images/personal/shared/space.jpeg")`};
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: ${({ $content }) =>
-        $content === "거래 기록 보기" ? "right bottom" : ""};
     border-radius: 10px;
     box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.25);
 
@@ -59,6 +57,14 @@ const Main = styled.div<{ $content: string }>`
     color: #fff;
     cursor: pointer;
 `;
+
+const BgImage = styled(Image)<{ $content: string }>`
+    object-fit: cover;
+    object-position: ${({ $content }) =>
+        $content === "거래 기록 보기" ? "right bottom" : "center"};
+    z-index: -1;
+`;
+
 const TotalLength = styled.span`
     color: #fcd676;
     font-weight: 900;

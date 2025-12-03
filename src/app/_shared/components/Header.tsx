@@ -2,6 +2,7 @@
 
 import styled from "styled-components";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -69,7 +70,12 @@ function Header() {
     return (
         <Div>
             <Link href="/personal/home">
-                <Logo src="/images/logo.png" alt="토끼로고" />
+                <Logo
+                    src="/images/logo.png"
+                    alt="토끼로고"
+                    width={125}
+                    height={40}
+                />
             </Link>
             <Navigate>
                 <Link href={`/personal/home`}>
@@ -121,7 +127,10 @@ function Header() {
             </Navigate>
             <RightContainer>
                 <ProfileImage
-                    $url={user?.image ?? "/images/login/personalProfile.png"}
+                    src={user?.image ?? "/images/login/personalProfile.png"}
+                    width={50}
+                    height={50}
+                    alt="헤더 프로필 이미지"
                 />
                 <ProfileName>{user?.name}</ProfileName>
                 <Money onClick={handleMoneyClick}>
@@ -215,8 +224,7 @@ const Div = styled.div`
     mask-size: cover;
 `;
 
-const Logo = styled.img`
-    width: 8.5rem;
+const Logo = styled(Image)`
     cursor: pointer;
 `;
 
@@ -270,15 +278,9 @@ const ProfileName = styled.div`
     color: #ffffff;
 `;
 
-const ProfileImage = styled.div<{ $url: string }>`
-    width: 2.8rem;
-    height: 2.8rem;
+const ProfileImage = styled(Image)`
     border-radius: 2.8rem;
     margin-right: 3px;
-    background-image: url(${(props) => props.$url});
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     box-shadow: 1px 1px 3px #3d3d3d7f;
 `;
 

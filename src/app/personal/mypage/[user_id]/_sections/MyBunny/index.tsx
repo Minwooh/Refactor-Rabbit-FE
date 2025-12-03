@@ -1,19 +1,45 @@
 import styled from "styled-components";
-import Link from "next/link";
-import MarketCap from "./MarketCap";
-import Reliavility from "./Reliavility";
-import GrowthRate from "./GrowthRate";
-import RadialGraph from "./RadialGraph";
+import Image from "next/image";
+//import MarketCap from "./MarketCap";
+//import Reliavility from "./Reliavility";
+//import GrowthRate from "./GrowthRate";
+//import RadialGraph from "./RadialGraph";
 import CoinType from "./CoinType";
 import AiSummarize from "@/app/personal/mypage/[user_id]/_sections/MyBunny/AiFeedBack";
-import CustomerHold from "./CustomerHold";
+//import CustomerHold from "./CustomerHold";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { BunnyHolder, BunnyInfo, getBunnyMe } from "@/app/_api/bunnyAPI";
 import { useUserStore } from "@/app/_store/userStore";
-import { motion } from "framer-motion";
 import { Bunny, useBunnyStore } from "@/app/_store/bunnyStore";
 import { useRouter } from "next/navigation";
+
+import dynamic from "next/dynamic";
+
+const MarketCap = dynamic(() => import("./MarketCap"), {
+    ssr: false,
+    loading: () => <div>시가총액 로딩 중...</div>,
+});
+
+const Reliavility = dynamic(() => import("./Reliavility"), {
+    ssr: false,
+    loading: () => <div>신뢰도 로딩 중...</div>,
+});
+
+const GrowthRate = dynamic(() => import("./GrowthRate"), {
+    ssr: false,
+    loading: () => <div>성장률 로딩 중...</div>,
+});
+
+const RadialGraph = dynamic(() => import("./RadialGraph"), {
+    ssr: false,
+    loading: () => <div>그래프 로딩 중...</div>,
+});
+
+const CustomerHold = dynamic(() => import("./CustomerHold"), {
+    ssr: false,
+    loading: () => <div>보유자 분포 로딩 중...</div>,
+});
 
 const radialObject: Bunny = {
     bunny_id: "",
@@ -42,6 +68,8 @@ const radialObject: Bunny = {
 function MyBunny() {
     const [bunnyInfo, setBunnyInfo] = useState<BunnyInfo>();
     const [bunnyHolder, setBunnyHolder] = useState<BunnyHolder[]>([]);
+    const [showCharts, setShowCharts] = useState(false);
+
     const { user } = useUserStore();
     const router = useRouter();
 
@@ -56,6 +84,8 @@ function MyBunny() {
     );
 
     useEffect(() => {
+        if (bunnyRole !== "ROLE_BUNNY") return;
+
         const fetchBunnyInfo = async () => {
             try {
                 const data = await getBunnyMe();
@@ -91,6 +121,10 @@ function MyBunny() {
         fetchBunnyInfo();
     }, []);
 
+    useEffect(() => {
+        setShowCharts(true);
+    }, []);
+
     return (
         <>
             {bunnyRole === "ROLE_USER" ? (
@@ -100,7 +134,16 @@ function MyBunny() {
                         아직 버니들에게 당신을 보여주지 않았어요
                         <br /> 상장을 통해 <b>로켓</b>에 탑승해주세요
                     </SmallTitle>
-                    <ClosedImage src="/images/personal/mypage/closed_bunny.png" />
+                    <ClosedImage
+                        src="/images/personal/mypage/closed_bunny.png"
+                        width={64} // px 단위 숫자 필수
+                        height={64}
+                        alt="닫는 토끼"
+                        style={{
+                            width: "3rem",
+                            height: "3rem",
+                        }}
+                    />
                 </BeforeBunny>
             ) : (
                 <Wrapper>
@@ -114,39 +157,44 @@ function MyBunny() {
                             <GoTradeText>내 코인 거래</GoTradeText>
                         </GoMyTrade>
                     )}
-
-                    <FirstRow>
-                        <Col>
-                            <MarketCap
-                                total={
-                                    bunnyInfo?.market_cap.toLocaleString() ??
-                                    "0"
-                                }
-                                price={
-                                    bunnyInfo?.current_price.toLocaleString() ??
-                                    "0"
-                                }
-                            />
-                            <Reliavility
-                                reliability={bunnyInfo?.reliability ?? 0}
-                            />
-                        </Col>
-                        <GrowthRate bunnyName={bunnyName} />
-                        <RadialGraph
-                            data={radialData ?? radialObject}
-                            devType={devType ?? "기본형"}
-                        />
-                    </FirstRow>
-                    <SecondRow>
-                        <CoinType type={bunnyInfo?.bunny_type} />
-                        <AiSummarize
-                            text={
-                                bunnyInfo?.ai_feedback ??
-                                "아직 AI 피드백이 완성되지 않았습니다"
-                            }
-                        />
-                        <CustomerHold holderData={bunnyHolder} />
-                    </SecondRow>
+                    {showCharts && (
+                        <>
+                            <FirstRow>
+                                <Col>
+                                    <MarketCap
+                                        total={
+                                            bunnyInfo?.market_cap.toLocaleString() ??
+                                            "0"
+                                        }
+                                        price={
+                                            bunnyInfo?.current_price.toLocaleString() ??
+                                            "0"
+                                        }
+                                    />
+                                    <Reliavility
+                                        reliability={
+                                            bunnyInfo?.reliability ?? 0
+                                        }
+                                    />
+                                </Col>
+                                <GrowthRate bunnyName={bunnyName} />
+                                <RadialGraph
+                                    data={radialData ?? radialObject}
+                                    devType={devType ?? "기본형"}
+                                />
+                            </FirstRow>
+                            <SecondRow>
+                                <CoinType type={bunnyInfo?.bunny_type} />
+                                <AiSummarize
+                                    text={
+                                        bunnyInfo?.ai_feedback ??
+                                        "아직 AI 피드백이 완성되지 않았습니다"
+                                    }
+                                />
+                                <CustomerHold holderData={bunnyHolder} />
+                            </SecondRow>
+                        </>
+                    )}
                 </Wrapper>
             )}
         </>
@@ -215,10 +263,7 @@ const SmallTitle = styled.div`
     line-height: normal;
 `;
 
-const ClosedImage = styled.img`
-    width: 160px;
-    height: auto;
-`;
+const ClosedImage = styled(Image)``;
 
 const GoMyTrade = styled.div`
     position: absolute;

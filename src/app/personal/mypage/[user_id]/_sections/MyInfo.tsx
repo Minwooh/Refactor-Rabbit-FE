@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
 import {
@@ -35,7 +36,11 @@ interface SpecField {
 }
 
 interface MyInfoProps {
-    onShowModal: (type: 'success' | 'error', title: string, message: string) => void;
+    onShowModal: (
+        type: "success" | "error",
+        title: string,
+        message: string
+    ) => void;
 }
 
 function MyInfo({ onShowModal }: MyInfoProps) {
@@ -185,11 +190,19 @@ function MyInfo({ onShowModal }: MyInfoProps) {
             const response = await putInfo(payload);
             console.log("서버 저장 완료", response);
 
-            onShowModal('success', '저장 완료! 🎉', '정보가 성공적으로 저장되었습니다.\n변경사항이 반영되었어요!');
+            onShowModal(
+                "success",
+                "저장 완료! 🎉",
+                "정보가 성공적으로 저장되었습니다.\n변경사항이 반영되었어요!"
+            );
         } catch (error) {
             console.error("저장 실패", error);
-            
-            onShowModal('error', '저장 실패 😢', '정보 저장 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+
+            onShowModal(
+                "error",
+                "저장 실패 😢",
+                "정보 저장 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
+            );
         }
     };
     const {
@@ -203,7 +216,12 @@ function MyInfo({ onShowModal }: MyInfoProps) {
                 <Main>
                     <InfoSection>
                         <ImgContainer>
-                            <ProfileImg $url={preview} />
+                            <ProfileImg
+                                src={preview}
+                                width={150}
+                                height={150}
+                                alt="프로필 이미지"
+                            />
                             <EditBtn
                                 $url={
                                     "/images/personal/mypage/edit_img_btn.png"
@@ -329,13 +347,7 @@ const ImgContainer = styled.div`
     height: 10rem;
 `;
 
-const ProfileImg = styled.div<{ $url: string }>`
-    width: 9.5rem;
-    height: 9.5rem;
-    background: #d9d9d9;
-    background-image: url(${(props) => props.$url});
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+const ProfileImg = styled(Image)`
     border-radius: 10px;
 `;
 
